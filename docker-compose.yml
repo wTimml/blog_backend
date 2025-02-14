@@ -1,0 +1,25 @@
+# version: '3.8'  # Specifies Docker Compose file format version
+
+services:                   # Defines the services/containers
+  web:                      # Name of the service
+    build: ./blog_backend   # Path to Dockerfile location
+    command: python manage.py runserver 0.0.0.0:8000  # Command to run Django server
+    volumes:                # Maps local directory to container directory
+      - ./blog_backend/:/usr/src/blog_backend/
+    ports:                  # Port mapping (host:container)
+     - 8000:8000
+    env_file:               # Loads environment variables from file
+      - ./.env.dev
+    depends_on:
+     - db
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgresuser
+      - POSTGRES_PASSWORD=postgrespassword
+      - POSTGRES_DB=djangoblog
+
+volumes:
+  postgres_data:
